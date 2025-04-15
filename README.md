@@ -9,6 +9,7 @@
 - 会話部分のみの抽出（雑音、音楽、無言部分を除外）
 - 重複フレーズや意味のないフレーズのフィルタリング
 - 複数の出力フォーマットサポート（テキスト、JSON、SRT、VTT）
+- GUI版とコマンドライン版の両方を提供
 
 ## 必要条件
 
@@ -34,19 +35,38 @@ pip install -r requirements.txt
 
 ## 使用方法
 
-### 基本的な使用法
+WhisperHoundは2つのインターフェースを提供しています：コマンドライン版とGUI版。
+
+### コマンドライン版の使用法
+
+#### 基本的な使用法
 
 ```bash
 python main.py -i input.mp3 -o transcript.txt
 ```
 
-### 詳細なオプション
+#### 詳細なオプション
 
 ```bash
 python main.py -i input.mp3 -o transcript.txt -f json -m large-v3-turbo -l ja --chunk-size 300.0
 ```
 
-### コマンドライン引数
+### GUI版（Streamlitアプリ）の使用法
+
+```bash
+streamlit run whisper_hound_app.py
+```
+
+ブラウザが自動的に開き、直感的なインターフェースを通じて：
+- 音声ファイルのアップロード
+- Whisperモデルと言語の選択
+- 処理パラメータの調整
+- リアルタイムの処理状況確認
+- 結果のプレビューとダウンロード
+
+が行えます。
+
+## コマンドライン引数
 
 | オプション | 説明 |
 |------------|------|
@@ -66,11 +86,24 @@ python main.py -i input.mp3 -o transcript.txt -f json -m large-v3-turbo -l ja --
 | `--end-time` | 処理を終了する時間（秒、デフォルト: 音声の終わりまで） |
 | `--append` | 既存の出力ファイルに追記する |
 
+## GUI版の特徴
+
+GUI版では以下の追加機能を提供しています：
+
+- 直感的なブラウザベースのインターフェース
+- 音声ファイル情報の表示（ファイル名、タイプ、サイズ）
+- アップロード時の音声ファイル自動変換オプション（Whisper最適化）
+- リアルタイム処理状況表示とプログレスバー
+- 処理結果のプレビュー表示
+- ワンクリックでの結果ダウンロード
+- 詳細設定のGUIコントロール
+
 ## プロジェクト構造
 
 ```
 whisperhound/
-├── main.py                     # メインスクリプト
+├── main.py                     # メインスクリプト（CLI版）
+├── whisper_hound_app.py        # Streamlitアプリ（GUI版）
 ├── config/
 │   └── argument_parser.py      # コマンドライン引数処理
 ├── utils/
@@ -81,8 +114,9 @@ whisperhound/
 │   ├── model_manager.py        # Whisperモデル管理
 │   ├── transcriber.py          # 文字起こし処理
 │   └── conversation_processor.py # 会話抽出・処理
-└── formatters/
-    └── output_formatter.py     # 出力フォーマット処理
+├── formatters/
+│   └── output_formatter.py     # 出力フォーマット処理
+└── convert_audio.py            # 音声変換ユーティリティ
 ```
 
 ## ライセンス
