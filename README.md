@@ -21,7 +21,7 @@
 ### 1. リポジトリのクローン
 
 ```bash
-git clone https://github.com/yourusername/whisperhound.git
+git clone https://github.com/wabisukecx/WhisperHound.git
 cd whisperhound
 ```
 
