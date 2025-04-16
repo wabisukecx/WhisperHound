@@ -54,7 +54,7 @@ python main.py -i input.mp3 -o transcript.txt -f json -m large-v3-turbo -l ja --
 ### GUI版（Streamlitアプリ）の使用法
 
 ```bash
-streamlit run app.py --server.fileWatcherType none
+streamlit run whisper_hound_app.py --server.fileWatcherType none
 ```
 
 ブラウザが自動的に開き、直感的なインターフェースを通じて：
