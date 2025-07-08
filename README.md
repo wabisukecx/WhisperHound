@@ -1,124 +1,140 @@
 # WhisperHound
 
-音声録音から会話部分のみを探し出し、文字起こしを行うPythonツールです。Whisperモデルを活用して長時間音声の文字起こしをサポートし、雑音や無関係な音を除外して、会話のみを抽出します。
+A Python tool that finds conversation segments from audio recordings and performs transcription. It leverages Whisper models to support transcription of long-duration audio while filtering out noise and irrelevant sounds to extract only conversations.
 
-## 特徴
+## Features
 
-- OpenAI Whisperモデルを使用した高精度な文字起こし
-- 長時間音声の処理（チャンク処理とオーバーラップ方式）
-- 会話部分のみの抽出（雑音、音楽、無言部分を除外）
-- 重複フレーズや意味のないフレーズのフィルタリング
-- 複数の出力フォーマットサポート（テキスト、JSON、SRT、VTT）
-- GUI版とコマンドライン版の両方を提供
+- High-precision transcription using OpenAI Whisper models
+- Long-duration audio processing (chunk processing with overlap method)
+- Conversation-only extraction (excludes noise, music, and silent segments)
+- Filtering of duplicate phrases and meaningless utterances
+- Support for multiple output formats (text, JSON, SRT, VTT)
+- Both GUI and command-line versions available
 
-## 必要条件
+## Requirements
 
-- Python 3.8以上
-- CUDA対応GPUの使用を推奨（CPU動作も可能）
+- Python 3.8 or higher
+- CUDA-compatible GPU recommended (CPU operation also supported)
 
-## インストール
+## Installation
 
-### 1. リポジトリのクローン
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/wabisukecx/WhisperHound.git
 cd whisperhound
 ```
 
-### 2. 必要なライブラリのインストール
+### 2. Install Required Libraries
 
 ```bash
 pip install -r requirements.txt
 ```
 
-注意: GPUサポートについては、[PyTorch公式サイト](https://pytorch.org/get-started/locally/)から適切なバージョンをインストールしてください。
+Note: For GPU support, please install the appropriate version from the [PyTorch official website](https://pytorch.org/get-started/locally/).
 
-## 使用方法
+## Usage
 
-WhisperHoundは2つのインターフェースを提供しています：コマンドライン版とGUI版。
+WhisperHound provides two interfaces: command-line version and GUI version.
 
-### コマンドライン版の使用法
+### Command-Line Version Usage
 
-#### 基本的な使用法
+#### Basic Usage
 
 ```bash
 python main.py -i input.mp3 -o transcript.txt
 ```
 
-#### 詳細なオプション
+#### Advanced Options
 
 ```bash
-python main.py -i input.mp3 -o transcript.txt -f json -m large-v3-turbo -l ja --chunk-size 300.0
+python main.py -i input.mp3 -o transcript.txt -f json -m large-v3-turbo -l en --chunk-size 300.0
 ```
 
-### GUI版（Streamlitアプリ）の使用法
+### GUI Version (Streamlit App) Usage
 
 ```bash
 streamlit run whisper_hound_app.py --server.fileWatcherType none
 ```
 
-ブラウザが自動的に開き、直感的なインターフェースを通じて：
-- 音声ファイルのアップロード
-- Whisperモデルと言語の選択
-- 処理パラメータの調整
-- リアルタイムの処理状況確認
-- 結果のプレビューとダウンロード
+A browser will automatically open, providing an intuitive interface where you can:
+- Upload audio files
+- Select Whisper model and language
+- Adjust processing parameters
+- Monitor real-time processing status
+- Preview and download results
 
-が行えます。
+## Command Line Arguments
 
-## コマンドライン引数
+| Option | Description |
+|--------|-------------|
+| `-i`, `--input` | Path to input audio file (required) |
+| `-o`, `--output` | Path to output file (default: conversation_transcript.txt) |
+| `-f`, `--format` | Output format: text, json, srt, vtt (default: text) |
+| `-m`, `--model-name` | Whisper model to use (default: large-v3-turbo) |
+| `-l`, `--language` | Audio language (default: ja) |
+| `--device` | Device to use: cuda, cpu (default: cuda if available) |
+| `--prompt` | Prompt to use for transcription |
+| `--min-segment-length` | Minimum length of conversation segments in seconds (default: 0.7) |
+| `--max-gap` | Maximum gap between segments to merge in seconds (default: 0.5) |
+| `--max-repetitions` | Maximum allowed repetitions of the same phrase (default: 2) |
+| `--chunk-size` | Size of audio chunks to process at once in seconds (default: 600.0) |
+| `--overlap` | Overlap between chunks in seconds (default: 10.0) |
+| `--start-time` | Time to start processing in seconds (default: 0.0) |
+| `--end-time` | Time to end processing in seconds (default: end of audio) |
+| `--append` | Append to existing output file |
 
-| オプション | 説明 |
-|------------|------|
-| `-i`, `--input` | 入力音声ファイルのパス（必須） |
-| `-o`, `--output` | 出力ファイルのパス（デフォルト: conversation_transcript.txt） |
-| `-f`, `--format` | 出力形式: text, json, srt, vtt（デフォルト: text） |
-| `-m`, `--model-name` | 使用するWhisperモデル（デフォルト: large-v3-turbo） |
-| `-l`, `--language` | 音声の言語（デフォルト: ja） |
-| `--device` | 使用するデバイス: cuda, cpu（デフォルト: 利用可能ならcuda） |
-| `--prompt` | 文字起こしに使用するプロンプト |
-| `--min-segment-length` | 会話セグメントの最小長さ（秒、デフォルト: 0.7） |
-| `--max-gap` | マージするセグメント間の最大間隔（秒、デフォルト: 0.5） |
-| `--max-repetitions` | 許容する同じフレーズの最大繰り返し回数（デフォルト: 2） |
-| `--chunk-size` | 一度に処理する音声チャンクのサイズ（秒、デフォルト: 600.0） |
-| `--overlap` | チャンク間のオーバーラップ（秒、デフォルト: 10.0） |
-| `--start-time` | 処理を開始する時間（秒、デフォルト: 0.0） |
-| `--end-time` | 処理を終了する時間（秒、デフォルト: 音声の終わりまで） |
-| `--append` | 既存の出力ファイルに追記する |
+## GUI Version Features
 
-## GUI版の特徴
+The GUI version provides the following additional features:
 
-GUI版では以下の追加機能を提供しています：
+- Intuitive browser-based interface
+- Audio file information display (filename, type, size)
+- Automatic audio file conversion option during upload (Whisper optimization)
+- Real-time processing status display and progress bar
+- Processing result preview display
+- One-click result download
+- GUI controls for detailed settings
 
-- 直感的なブラウザベースのインターフェース
-- 音声ファイル情報の表示（ファイル名、タイプ、サイズ）
-- アップロード時の音声ファイル自動変換オプション（Whisper最適化）
-- リアルタイム処理状況表示とプログレスバー
-- 処理結果のプレビュー表示
-- ワンクリックでの結果ダウンロード
-- 詳細設定のGUIコントロール
-
-## プロジェクト構造
+## Project Structure
 
 ```
 whisperhound/
-├── main.py                     # メインスクリプト（CLI版）
-├── whisper_hound_app.py        # Streamlitアプリ（GUI版）
+├── main.py                     # Main script (CLI version)
+├── whisper_hound_app.py        # Streamlit app (GUI version)
 ├── config/
-│   └── argument_parser.py      # コマンドライン引数処理
+│   └── argument_parser.py      # Command line argument processing
 ├── utils/
-│   ├── audio_utils.py          # 音声ファイル操作関連
-│   ├── time_utils.py           # タイムスタンプ変換など時間関連
-│   └── io_utils.py             # ファイル出力関連
+│   ├── audio_utils.py          # Audio file operations
+│   ├── time_utils.py           # Timestamp conversion and time-related utilities
+│   └── io_utils.py             # File output operations
 ├── core/
-│   ├── model_manager.py        # Whisperモデル管理
-│   ├── transcriber.py          # 文字起こし処理
-│   └── conversation_processor.py # 会話抽出・処理
+│   ├── model_manager.py        # Whisper model management
+│   ├── transcriber.py          # Transcription processing
+│   └── conversation_processor.py # Conversation extraction and processing
 ├── formatters/
-│   └── output_formatter.py     # 出力フォーマット処理
-└── convert_audio.py            # 音声変換ユーティリティ
+│   └── output_formatter.py     # Output format processing
+└── convert_audio.py            # Audio conversion utility
 ```
 
-## ライセンス
+## Technical Overview
 
-MITライセンス
+WhisperHound employs a sophisticated multi-stage approach to extract meaningful conversations from audio recordings. The process begins by dividing long audio files into manageable chunks with overlapping segments to ensure no conversation boundaries are lost during processing.
+
+Each audio chunk undergoes transcription using OpenAI's Whisper model, which provides not only the text content but also confidence scores and timing information for each segment. The system then applies intelligent filtering algorithms to distinguish between actual conversation and background noise, music, or other non-conversational audio.
+
+The conversation detection algorithm evaluates multiple factors including segment duration, speech probability scores, and content patterns to identify genuine dialogue. It specifically filters out repeated phrases that often result from audio artifacts or transcription errors, while preserving natural conversational repetitions that carry meaning.
+
+After initial extraction, the system performs segment merging to combine closely spaced utterances that belong to the same conversational flow, creating more natural and readable transcripts. This approach ensures that brief pauses or hesitations don't artificially fragment continuous speech.
+
+The final output undergoes additional processing to remove duplicate content that may arise from the overlapping chunk processing method, ensuring a clean and coherent final transcript.
+
+## Performance Considerations
+
+The tool is designed to handle audio files of varying lengths efficiently. For optimal performance with long recordings, the default chunk size of 10 minutes (600 seconds) with 10-second overlaps provides a good balance between processing speed and transcription accuracy.
+
+GPU acceleration is highly recommended for faster processing, especially when working with larger Whisper models. The system automatically detects CUDA availability and defaults to GPU processing when possible, significantly reducing transcription time for long audio files.
+
+## License
+
+MIT License
